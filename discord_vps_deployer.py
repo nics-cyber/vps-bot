@@ -126,6 +126,14 @@ def generate_tmate_session():
     ssh_connection = result.stdout.strip()
     return ssh_connection
 
+def adjust_poweredge_resources(ram: int, cpu: int):
+    """
+    Function to adjust Free PowerEdge resources (RAM and CPU) based on VPS requirements.
+    """
+    print(f"Adjusting Free PowerEdge resources: RAM={ram}MB, CPU={cpu} cores")
+    # Replace this with your actual Free PowerEdge resource adjustment logic
+    subprocess.run(["sudo", "poweredge-adjust", "--ram", str(ram), "--cpu", str(cpu)], check=True)
+
 async def cleanup_vps(vps_id: int, timeout: int):
     """
     Function to automatically delete a VPS after a specified timeout.
@@ -167,6 +175,13 @@ async def deploy_vps(ctx, os_name: str, ram: int, cpu: int, timeout: int = None)
         return
     if cpu < 1 or cpu > 16:
         await ctx.send("❌ Invalid CPU count. Please specify a value between 1 and 16 cores.")
+        return
+
+    # Adjust Free PowerEdge resources
+    try:
+        adjust_poweredge_resources(ram, cpu)
+    except Exception as e:
+        await ctx.send(f"❌ Failed to adjust Free PowerEdge resources: {e}")
         return
 
     # Deploy the VPS

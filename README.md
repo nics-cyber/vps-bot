@@ -1,216 +1,158 @@
-Here’s a comprehensive **README.md** for your VPS management script. It explains the supported OS, installation steps, usage instructions, features, and more.
+
+
+# Discord VPS Deployer
+
+A Discord bot that allows you to deploy VPS instances with custom OS, RAM, and CPU configurations. The bot integrates with **FreeRoot** for OS customization and supports 10 different operating systems.
 
 ---
 
-# VPS Management Script
+## Features
 
-This script allows you to create and manage VPS-like environments using `tmux` and `tmate`. It is designed to work without Docker or systemd, making it lightweight and easy to use. Admins can create VPS instances, choose the OS, and send `tmate` SSH connection strings to specific users via Discord DM.
-
----
-
-## **Features**
-
-- **OS Selection**: Choose from supported operating systems (Ubuntu, Debian, CentOS).
-- **Admin-Only Commands**: Only users with the admin role can create VPS instances.
-- **Discord Integration**: Send `tmate` SSH connection strings to users via DM.
-- **No Docker or Systemd**: Uses `tmux` and `tmate` for session management.
-- **Lightweight**: No heavy dependencies or complex setup required.
+- **Easy Deployment Command:** Deploy a VPS with a simple `/deploy os ram cpu` command.
+- **Custom OS Customization:** Uses **FreeRoot** to customize the OS before deployment.
+- **10 Supported OS Options:** Choose from 10 different operating systems.
+- **Discord Channel and Role Restrictions:** Only allow deployment in specific channels and for specific roles.
+- **Validation:** Ensures RAM and CPU values are within acceptable ranges.
 
 ---
 
-## **Supported Operating Systems**
+## Supported Operating Systems
 
-The script supports the following operating systems:
+The bot supports the following operating systems:
 
-- **Ubuntu**
-- **Debian**
-- **CentOS**
-
-You can easily extend the script to support more OS options by modifying the `SUPPORTED_OS` array.
+| OS Name   | Download URL                                                                 |
+|-----------|------------------------------------------------------------------------------|
+| Ubuntu    | [Ubuntu 22.04](https://releases.ubuntu.com/22.04/ubuntu-22.04.3-live-server-amd64.iso) |
+| Debian    | [Debian 12](https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-12.1.0-amd64-netinst.iso) |
+| CentOS    | [CentOS 7](http://isoredirect.centos.org/centos/7/isos/x86_64/CentOS-7-x86_64-DVD-2009.iso) |
+| Fedora    | [Fedora 38](https://download.fedoraproject.org/pub/fedora/linux/releases/38/Server/x86_64/iso/Fedora-Server-dvd-x86_64-38-1.6.iso) |
+| Arch      | [Arch Linux](https://mirror.rackspace.com/archlinux/iso/2023.10.14/archlinux-2023.10.14-x86_64.iso) |
+| Alpine    | [Alpine Linux](https://dl-cdn.alpinelinux.org/alpine/v3.18/releases/x86_64/alpine-virt-3.18.4-x86_64.iso) |
+| Kali      | [Kali Linux](https://cdimage.kali.org/kali-2023.3/kali-linux-2023.3-installer-amd64.iso) |
+| OpenSUSE  | [OpenSUSE Leap 15.5](https://download.opensuse.org/distribution/leap/15.5/iso/openSUSE-Leap-15.5-DVD-x86_64.iso) |
+| Rocky     | [Rocky Linux 9](https://download.rockylinux.org/pub/rocky/9/isos/x86_64/Rocky-9.2-x86_64-dvd.iso) |
+| FreeBSD   | [FreeBSD 13.2](https://download.freebsd.org/releases/amd64/amd64/ISO-IMAGES/13.2/FreeBSD-13.2-RELEASE-amd64-dvd1.iso) |
 
 ---
 
-## **Installation**
+## Prerequisites
 
-### **Prerequisites**
+1. **Python 3.8 or higher:** Ensure Python is installed on your system.
+2. **Discord Bot Token:** Create a bot on the [Discord Developer Portal](https://discord.com/developers/applications) and get the bot token.
+3. **Virtualization Tools:** Install tools like `qemu` or `VirtualBox` for VPS deployment.
+4. **Git:** Install Git to clone the FreeRoot repository.
 
-1. **Server Requirements**:
-   - A Linux-based server (e.g., Ubuntu, Debian, CentOS).
-   - `tmux` and `tmate` installed.
+---
 
-2. **Discord Bot**:
-   - Create a Discord bot and get its token from the [Discord Developer Portal](https://discord.com/developers/applications).
-   - Ensure the bot has the following permissions:
-     - Read Messages
-     - Send Messages
-     - Direct Messages
+## Installation
 
-### **Install Dependencies**
-
-1. Install `tmux` and `tmate`:
+1. **Clone the Repository:**
    ```bash
-   sudo apt update
-   sudo apt install tmux tmate
+   git clone https://github.com/your-username/discord-vps-deployer.git
+   cd discord-vps-deployer
    ```
 
-2. Install `curl` (for sending Discord messages):
+2. **Install Dependencies:**
    ```bash
-   sudo apt install curl
+   pip install discord.py
+   sudo apt install wget git
    ```
 
----
+3. **Configure the Bot:**
+   - Open the `discord_vps_deployer.py` file.
+   - Replace `YOUR_DISCORD_BOT_TOKEN` with your actual bot token.
+   - Replace `ALLOWED_CHANNEL_IDS` and `ALLOWED_ROLE_IDS` with the IDs of the channels and roles you want to allow.
 
-## **Setup**
-
-1. **Download the Script**:
-   - Save the script as `vps-manager.sh`:
-     ```bash
-     wget https://example.com/vps-manager.sh
-     ```
-
-2. **Make the Script Executable**:
+4. **Run the Bot:**
    ```bash
-   chmod +x vps-manager.sh
-   ```
-
-3. **Configure the Script**:
-   - Open the script in a text editor:
-     ```bash
-     nano vps-manager.sh
-     ```
-   - Update the following variables:
-     ```bash
-     DISCORD_BOT_TOKEN="YOUR_DISCORD_BOT_TOKEN"
-     ADMIN_ROLE_ID="ADMIN_ROLE_ID"  # Replace with your admin role ID
-     ```
-
-4. **Run the Script**:
-   ```bash
-   ./vps-manager.sh
+   python3 discord_vps_deployer.py
    ```
 
 ---
 
-## **Usage**
+## Usage
 
-### **Commands**
+### Deploy a VPS
 
-| Command               | Description                                                                 | Permissions       |
-|-----------------------|-----------------------------------------------------------------------------|-------------------|
-| `!create-vps <os> <user_id>` | Creates a VPS with the specified OS and DMs the user with `tmate` info. | Admins only       |
+Use the `/deploy` command to deploy a VPS with the specified OS, RAM, and CPU.
 
-### **Examples**
-
-1. **Create a VPS with Ubuntu**:
-   ```
-   !create-vps ubuntu 123456789012345678
-   ```
-
-2. **Create a VPS with Debian**:
-   ```
-   !create-vps debian 123456789012345678
-   ```
-
-3. **Create a VPS with CentOS**:
-   ```
-   !create-vps centos 123456789012345678
-   ```
-
----
-
-## **How It Works**
-
-1. **Admin Command**:
-   - Admins use the command `!create-vps <os> <user_id>` to create a VPS.
-
-2. **OS Selection**:
-   - The script validates the OS choice (e.g., `ubuntu`, `debian`, `centos`).
-
-3. **VPS Creation**:
-   - The script starts a `tmux` session with `tmate` and captures the SSH connection string.
-
-4. **DM User**:
-   - The script sends the SSH connection string to the specified user via Discord DM.
-
----
-
-## **Security Considerations**
-
-1. **Role-Based Access**:
-   - Only users with the admin role can create VPS instances.
-
-2. **Input Validation**:
-   - The script validates the OS choice and user ID to prevent errors.
-
-3. **Logging**:
-   - Log all activities for auditing purposes.
-
-4. **Environment Isolation**:
-   - Run the script in a restricted environment to limit access to the host system.
-
----
-
-## **Extending the Script**
-
-### **Add More OS Options**
-
-To add more OS options, update the `SUPPORTED_OS` array in the script:
-
-```bash
-SUPPORTED_OS=("ubuntu" "debian" "centos" "alpine" "fedora")
+**Command Format:**
+```
+/deploy <os> <ram> <cpu>
 ```
 
-### **Customize Discord Messages**
-
-You can customize the Discord message by modifying the `send_discord_message` function:
-
-```bash
-send_discord_message() {
-    local user_id=$1
-    local message=$2
-
-    curl -s -X POST \
-        -H "Authorization: Bot $DISCORD_BOT_TOKEN" \
-        -H "Content-Type: application/json" \
-        -d "{\"content\":\"$message\"}" \
-        "https://discord.com/api/v9/users/$user_id/channels" > /dev/null
-}
+**Example:**
+```
+/deploy ubuntu 2048 2
 ```
 
+This command will deploy a VPS with:
+- OS: Ubuntu
+- RAM: 2048MB (2GB)
+- CPU: 2 cores
+
+### Supported OS Options
+
+You can deploy the following operating systems:
+- `ubuntu`
+- `debian`
+- `centos`
+- `fedora`
+- `arch`
+- `alpine`
+- `kali`
+- `opensuse`
+- `rocky`
+- `freebsd`
+
+### Validation
+
+- **RAM:** Must be between 512MB and 16384MB.
+- **CPU:** Must be between 1 and 16 cores.
+
 ---
 
-## **Troubleshooting**
+## Example Workflow
 
-### **Common Issues**
+1. **User in Allowed Channel:**
+   ```
+   User: /deploy ubuntu 2048 2
+   Bot: 🚀 Deploying VPS with OS: ubuntu, RAM: 2048MB, CPU: 2 cores...
+   Bot: ✅ VPS deployed successfully!
+   ```
 
-1. **`tmux` or `tmate` not installed**:
-   - Ensure `tmux` and `tmate` are installed and available in your system's PATH.
+2. **User in Disallowed Channel:**
+   ```
+   User: /deploy ubuntu 2048 2
+   Bot: ❌ This command is not allowed in this channel.
+   ```
 
-2. **Discord DM not working**:
-   - Ensure the bot has the necessary permissions to send DMs.
-   - Check the Discord bot token for errors.
+3. **User Without Allowed Role:**
+   ```
+   User: /deploy ubuntu 2048 2
+   Bot: ❌ You do not have permission to use this command.
+   ```
 
-3. **Failed to capture `tmate` SSH string**:
-   - Ensure the `tmux` session is running and `tmate` is properly configured.
+4. **Invalid Input:**
+   ```
+   User: /deploy ubuntu 128 2
+   Bot: ❌ Invalid RAM amount. Please specify a value between 512 and 16384 MB.
+   ```
 
 ---
 
-## **License**
+## Notes
+
+- Replace the `create_vps` function with your actual VPS deployment logic (e.g., using QEMU, VirtualBox, or another virtualization tool).
+- Ensure the bot has the necessary permissions to read messages and manage roles in your Discord server.
+- Test the script thoroughly before deploying it in a production environment.
+
+---
+
+## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ---
 
-## **Contributing**
-
-Contributions are welcome! Please open an issue or submit a pull request.
-
----
-
-## **Support**
-
-For support, please open an issue on the [GitHub repository](https://github.com/your-repo/vps-manager).
-
----
-
-Let me know if you need further assistance!
+Enjoy deploying VPS instances with ease using the **Discord VPS Deployer**! 🚀

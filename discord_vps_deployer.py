@@ -61,23 +61,12 @@ def fake_neofetch(os_name: str, ram: int, cpu: int):
     """
     return neofetch_output
 
-def generate_tmate_session():
+def generate_fake_ssh():
     """
-    Function to generate a tmate SSH session.
-    Returns the SSH connection string.
+    Generates a fake SSH connection string.
     """
-    print("Generating tmate session...")
-    # Install tmate if not already installed
-    if not os.path.exists("/usr/bin/tmate"):
-        subprocess.run(["sudo", "apt", "update"], check=True)
-        subprocess.run(["sudo", "apt", "install", "-y", "tmate"], check=True)
-
-    # Start tmate and get the SSH connection string
-    result = subprocess.run(["tmate", "-S", "/tmp/tmate.sock", "new-session", "-d"], capture_output=True, text=True, check=True)
-    subprocess.run(["tmate", "-S", "/tmp/tmate.sock", "wait", "tmate-ready"], check=True)
-    result = subprocess.run(["tmate", "-S", "/tmp/tmate.sock", "display", "-p", "#{tmate_ssh}"], capture_output=True, text=True, check=True)
-    ssh_connection = result.stdout.strip()
-    return ssh_connection
+    fake_ssh = "ssh fakeuser@fakevps.example.com -p 22"
+    return fake_ssh
 
 async def cleanup_vps(vps_id: int, timeout: int):
     """
@@ -85,7 +74,6 @@ async def cleanup_vps(vps_id: int, timeout: int):
     """
     await asyncio.sleep(timeout)
     if vps_id in vps_instances:
-        vps_instances[vps_id].terminate()
         del vps_instances[vps_id]
         print(f"VPS {vps_id} has been deleted.")
 
@@ -129,8 +117,8 @@ async def deploy_vps(ctx, os_name: str, ram: int, cpu: int, timeout: int = None)
         neofetch_output = fake_neofetch(os_name, ram, cpu)
         await ctx.send(f"```{neofetch_output}```")
 
-        # Generate tmate SSH session
-        ssh_connection = generate_tmate_session()
+        # Generate fake SSH connection
+        ssh_connection = generate_fake_ssh()
         await ctx.author.send(f"🔑 Your VPS SSH connection:\n```{ssh_connection}```")
         await ctx.send("📩 Check your DMs for the SSH connection details!")
 

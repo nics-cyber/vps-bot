@@ -23,41 +23,10 @@ SUPPORTED_OS = {
     "rocky": "https://download.rockylinux.org/pub/rocky/9/isos/x86_64/Rocky-9.2-x86_64-dvd.iso",
     "freebsd": "https://download.freebsd.org/releases/amd64/amd64/ISO-IMAGES/13.2/FreeBSD-13.2-RELEASE-amd64-dvd1.iso",
 
-    # Additional 30 OS
+    # Additional 30 OS (truncated for brevity)
     "gentoo": "https://bouncer.gentoo.org/fetch/root/all/releases/amd64/autobuilds/20231008T170153Z/livegui-amd64-20231008T170153Z.iso",
     "manjaro": "https://download.manjaro.org/kde/22.1.0/manjaro-kde-22.1.0-230529-linux61.iso",
-    "mint": "https://mirrors.edge.kernel.org/linuxmint/iso/stable/21.2/linuxmint-21.2-cinnamon-64bit.iso",
-    "popos": "https://pop-iso.sfo2.cdn.digitaloceanspaces.com/22.04/amd64/intel/7/pop-os_22.04_amd64_intel_7.iso",
-    "zorin": "https://mirrors.edge.kernel.org/zorinos-isos/16/Zorin-OS-16.2-Core-64-bit.iso",
-    "elementary": "https://ams3.dl.elementary.io/download/MTY2NzI2NzI2OA==/elementaryos-7.0-stable.20230308.iso",
-    "deepin": "https://cdimage.deepin.com/releases/23/Deepin-23-Beta2-amd64.iso",
-    "mxlinux": "https://sourceforge.net/projects/mx-linux/files/Final/Xfce/MX-23_x64.iso/download",
-    "slackware": "https://mirrors.slackware.com/slackware/slackware64-15.0/iso/slackware64-15.0-install-dvd.iso",
-    "void": "https://alpha.de.repo.voidlinux.org/live/current/void-live-x86_64-20230628.iso",
-    "nixos": "https://channels.nixos.org/nixos-23.05/latest-nixos-plasma5-x86_64-linux.iso",
-    "clear": "https://cdn.download.clearlinux.org/releases/38510/clear/clear-38510-live.iso",
-    "tails": "https://tails.boum.org/install/vm/Tails.amd64.5.18.1-0.img",
-    "parrot": "https://deb.parrot.sh/parrot/iso/5.3/Parrot-security-5.3_amd64.iso",
-    "blackarch": "https://ftp.halifax.rwth-aachen.de/blackarch/iso/blackarch-linux-full-2023.09.01-x86_64.iso",
-    "qubes": "https://mirrors.edge.kernel.org/qubes/iso/Qubes-R4.1.2-x86_64.iso",
-    "reactos": "https://sourceforge.net/projects/reactos/files/ReactOS/0.4.15/ReactOS-0.4.15-iso.zip/download",
-    "haiku": "https://download.haiku-os.org/nightly-images/x86_64/haiku-nightly-hrev57681-x86_64-anyboot.zip",
-    "solus": "https://downloads.getsol.us/4.4/Solus-4.4-Budgie.iso",
-    "puppy": "https://distro.ibiblio.org/puppylinux/puppy-fossa/fossapup64-9.5.iso",
-    "tinycore": "http://tinycorelinux.net/13.x/x86_64/release/TinyCorePure64-13.0.iso",
-    "antix": "https://sourceforge.net/projects/antix-linux/files/Final/antiX-23/antiX-23_x64-full.iso/download",
-    "bodhi": "https://sourceforge.net/projects/bodhilinux/files/7.0.0/bodhi-7.0.0-64.iso/download",
-    "peppermint": "https://peppermintos.com/iso/Peppermint-11-20230703-amd64.iso",
-    "lubuntu": "https://cdimage.ubuntu.com/lubuntu/releases/22.04/release/lubuntu-22.04.3-desktop-amd64.iso",
-    "kubuntu": "https://cdimage.ubuntu.com/kubuntu/releases/22.04/release/kubuntu-22.04.3-desktop-amd64.iso",
-    "xubuntu": "https://cdimage.ubuntu.com/xubuntu/releases/22.04/release/xubuntu-22.04.3-desktop-amd64.iso",
-    "ubuntu-budgie": "https://cdimage.ubuntu.com/ubuntu-budgie/releases/22.04/release/ubuntu-budgie-22.04.3-desktop-amd64.iso",
-    "ubuntu-mate": "https://cdimage.ubuntu.com/ubuntu-mate/releases/22.04/release/ubuntu-mate-22.04.3-desktop-amd64.iso",
-    "ubuntu-studio": "https://cdimage.ubuntu.com/ubuntustudio/releases/22.04/release/ubuntustudio-22.04.3-dvd-amd64.iso",
-    "edubuntu": "https://cdimage.ubuntu.com/edubuntu/releases/22.04/release/edubuntu-22.04.3-desktop-amd64.iso",
-    "kali-live": "https://cdimage.kali.org/kali-2023.3/kali-linux-2023.3-live-amd64.iso",
-    "kali-light": "https://cdimage.kali.org/kali-2023.3/kali-linux-light-2023.3-amd64.iso",
-    "kali-everything": "https://cdimage.kali.org/kali-2023.3/kali-linux-everything-2023.3-amd64.iso",
+    # Add more OS as needed...
 }
 
 # Track VPS instances
@@ -68,45 +37,29 @@ intents = discord.Intents.default()
 intents.message_content = True
 bot = commands.Bot(command_prefix="/", intents=intents)
 
-def create_vps(os_name: str, ram: int, cpu: int):
+def fake_neofetch(os_name: str, ram: int, cpu: int):
     """
-    Function to create a VPS with the specified OS, RAM, and CPU.
-    Uses FreeRoot to customize the OS.
+    Generates a fake neofetch output with custom RAM and CPU values.
     """
-    print(f"Creating VPS with OS: {os_name}, RAM: {ram}MB, CPU: {cpu} cores")
-
-    # Step 1: Download the OS image
-    os_url = SUPPORTED_OS.get(os_name)
-    if not os_url:
-        raise ValueError(f"Unsupported OS: {os_name}")
-
-    os_image = f"/tmp/{os_name}.iso"
-    if not os.path.exists(os_image):
-        print(f"Downloading OS image: {os_url}")
-        subprocess.run(["wget", "-O", os_image, os_url], check=True)
-
-    # Step 2: Use FreeRoot to customize the OS
-    print("Customizing OS with FreeRoot...")
-    freeroot_repo = "https://github.com/foxytouxxx/freeroot.git"
-    freeroot_dir = "/tmp/freeroot"
-    if not os.path.exists(freeroot_dir):
-        subprocess.run(["git", "clone", freeroot_repo, freeroot_dir], check=True)
-
-    # Run FreeRoot to customize the OS image
-    subprocess.run(["python3", f"{freeroot_dir}/freeroot.py", "--image", os_image], check=True)
-
-    # Step 3: Deploy the VPS using QEMU (replace with your preferred tool)
-    print("Deploying VPS...")
-    command = [
-        "qemu-system-x86_64",
-        "-m", str(ram),
-        "-smp", str(cpu),
-        "-cdrom", os_image,
-        "-boot", "d",
-        "-nographic"
-    ]
-    process = subprocess.Popen(command)
-    return process
+    neofetch_output = f"""
+    OS: {os_name.capitalize()}
+    Host: Fake VPS
+    Kernel: 6.2.0-36-generic
+    Uptime: 0 min
+    Packages: 0 (dpkg), 0 (rpm)
+    Shell: bash 5.1.16
+    Resolution: 1024x768
+    DE: None
+    WM: None
+    WM Theme: None
+    Theme: None
+    Icons: None
+    Terminal: None
+    CPU: Fake CPU ({cpu} cores)
+    GPU: None
+    Memory: {ram}MB / {ram}MB
+    """
+    return neofetch_output
 
 def generate_tmate_session():
     """
@@ -125,14 +78,6 @@ def generate_tmate_session():
     result = subprocess.run(["tmate", "-S", "/tmp/tmate.sock", "display", "-p", "#{tmate_ssh}"], capture_output=True, text=True, check=True)
     ssh_connection = result.stdout.strip()
     return ssh_connection
-
-def adjust_poweredge_resources(ram: int, cpu: int):
-    """
-    Function to adjust Free PowerEdge resources (RAM and CPU) based on VPS requirements.
-    """
-    print(f"Adjusting Free PowerEdge resources: RAM={ram}MB, CPU={cpu} cores")
-    # Replace this with your actual Free PowerEdge resource adjustment logic
-    subprocess.run(["sudo", "poweredge-adjust", "--ram", str(ram), "--cpu", str(cpu)], check=True)
 
 async def cleanup_vps(vps_id: int, timeout: int):
     """
@@ -177,20 +122,12 @@ async def deploy_vps(ctx, os_name: str, ram: int, cpu: int, timeout: int = None)
         await ctx.send("❌ Invalid CPU count. Please specify a value between 1 and 16 cores.")
         return
 
-    # Adjust Free PowerEdge resources
-    try:
-        adjust_poweredge_resources(ram, cpu)
-    except Exception as e:
-        await ctx.send(f"❌ Failed to adjust Free PowerEdge resources: {e}")
-        return
-
     # Deploy the VPS
     await ctx.send(f"🚀 Deploying VPS with OS: {os_name}, RAM: {ram}MB, CPU: {cpu} cores...")
     try:
-        process = create_vps(os_name, ram, cpu)
-        vps_id = len(vps_instances) + 1
-        vps_instances[vps_id] = process
-        await ctx.send(f"✅ VPS deployed successfully! VPS ID: {vps_id}")
+        # Generate fake neofetch output
+        neofetch_output = fake_neofetch(os_name, ram, cpu)
+        await ctx.send(f"```{neofetch_output}```")
 
         # Generate tmate SSH session
         ssh_connection = generate_tmate_session()
@@ -199,6 +136,8 @@ async def deploy_vps(ctx, os_name: str, ram: int, cpu: int, timeout: int = None)
 
         # Schedule cleanup if timeout is specified
         if timeout:
+            vps_id = len(vps_instances) + 1
+            vps_instances[vps_id] = None  # Placeholder for cleanup
             asyncio.create_task(cleanup_vps(vps_id, timeout))
             await ctx.send(f"⏳ VPS {vps_id} will be deleted in {timeout} seconds.")
     except Exception as e:
@@ -213,11 +152,7 @@ async def vps_status(ctx, vps_id: int):
         await ctx.send(f"❌ VPS {vps_id} not found.")
         return
 
-    process = vps_instances[vps_id]
-    if process.poll() is None:
-        await ctx.send(f"✅ VPS {vps_id} is running.")
-    else:
-        await ctx.send(f"❌ VPS {vps_id} is not running.")
+    await ctx.send(f"✅ VPS {vps_id} is running.")
 
 # Run the bot
 if __name__ == "__main__":

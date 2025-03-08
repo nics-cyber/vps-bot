@@ -1,234 +1,204 @@
-Here’s the updated **README.md** file that includes all the features, installation instructions, and usage details for the **Discord VPS Deployer** bot. This README is designed to be comprehensive and user-friendly.
+
 
 ---
 
-# Discord VPS Deployer
+# Discord VPS Deployer Bot
 
-A Discord bot that allows you to deploy VPS instances with custom OS, RAM, and CPU configurations. The bot integrates with **FreeRoot** for OS customization, supports **tmate** for instant SSH access, and includes advanced features like automatic cleanup, status monitoring, and more.
-
----
-
-## Features
-
-1. **Custom VPS Deployment:**
-   - Deploy a VPS with a simple `/deploy os ram cpu` command.
-   - Supports **40 different operating systems**.
-
-2. **FreeRoot Integration:**
-   - Uses **FreeRoot** to customize the OS image before deployment (e.g., SSH keys, user accounts, pre-installed software).
-
-3. **tmate SSH Access:**
-   - Automatically generates a tmate SSH session and sends the connection details to the user via DM.
-
-4. **Automatic VPS Cleanup:**
-   - Automatically deletes a VPS after a specified timeout (e.g., 1 hour, 24 hours).
-
-5. **VPS Status Monitoring:**
-   - Check the status of a deployed VPS using the `/status` command.
-
-6. **Discord Channel and Role Restrictions:**
-   - Restrict VPS deployment to specific Discord channels and roles.
-
-7. **Validation:**
-   - Ensures RAM and CPU values are within acceptable ranges.
-
-8. **No Docker or Systemd:**
-   - Runs natively without requiring Docker or systemd.
-
-9. **Multiple VPS Instances:**
-   - Deploy and manage multiple VPS instances simultaneously.
-
-10. **40 Supported Operating Systems:**
-    - Includes popular Linux distributions, BSD variants, and specialized OS like Kali Linux and Tails.
+A Discord bot that allows users to deploy fake VPS instances and manage Docker containers directly from Discord. The bot simulates VPS deployment and provides fake `neofetch` outputs, SSH connections, and Docker container management.
 
 ---
 
-## Supported Operating Systems
+## **Features**
+1. **Fake VPS Deployment**:
+   - Simulates the deployment of a VPS with custom RAM, CPU, and OS.
+   - Generates a fake `neofetch` output to display system information.
+   - Provides a fake SSH connection string.
+   - Supports customizable duration for automatic deletion.
 
-The bot supports the following **40 operating systems**:
+2. **Docker Container Management**:
+   - Deploy, list, stop, and delete Docker containers.
+   - Supports any Docker image available on Docker Hub.
 
-| OS Name         | Download URL                                                                 |
-|-----------------|------------------------------------------------------------------------------|
-| Ubuntu          | [Ubuntu 22.04](https://releases.ubuntu.com/22.04/ubuntu-22.04.3-live-server-amd64.iso) |
-| Debian          | [Debian 12](https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-12.1.0-amd64-netinst.iso) |
-| CentOS          | [CentOS 7](http://isoredirect.centos.org/centos/7/isos/x86_64/CentOS-7-x86_64-DVD-2009.iso) |
-| Fedora          | [Fedora 38](https://download.fedoraproject.org/pub/fedora/linux/releases/38/Server/x86_64/iso/Fedora-Server-dvd-x86_64-38-1.6.iso) |
-| Arch            | [Arch Linux](https://mirror.rackspace.com/archlinux/iso/2023.10.14/archlinux-2023.10.14-x86_64.iso) |
-| Alpine          | [Alpine Linux](https://dl-cdn.alpinelinux.org/alpine/v3.18/releases/x86_64/alpine-virt-3.18.4-x86_64.iso) |
-| Kali            | [Kali Linux](https://cdimage.kali.org/kali-2023.3/kali-linux-2023.3-installer-amd64.iso) |
-| OpenSUSE        | [OpenSUSE Leap 15.5](https://download.opensuse.org/distribution/leap/15.5/iso/openSUSE-Leap-15.5-DVD-x86_64.iso) |
-| Rocky           | [Rocky Linux 9](https://download.rockylinux.org/pub/rocky/9/isos/x86_64/Rocky-9.2-x86_64-dvd.iso) |
-| FreeBSD         | [FreeBSD 13.2](https://download.freebsd.org/releases/amd64/amd64/ISO-IMAGES/13.2/FreeBSD-13.2-RELEASE-amd64-dvd1.iso) |
-| Gentoo          | [Gentoo LiveGUI](https://bouncer.gentoo.org/fetch/root/all/releases/amd64/autobuilds/20231008T170153Z/livegui-amd64-20231008T170153Z.iso) |
-| Manjaro         | [Manjaro KDE](https://download.manjaro.org/kde/22.1.0/manjaro-kde-22.1.0-230529-linux61.iso) |
-| Mint            | [Linux Mint 21.2](https://mirrors.edge.kernel.org/linuxmint/iso/stable/21.2/linuxmint-21.2-cinnamon-64bit.iso) |
-| Pop!_OS         | [Pop!_OS 22.04](https://pop-iso.sfo2.cdn.digitaloceanspaces.com/22.04/amd64/intel/7/pop-os_22.04_amd64_intel_7.iso) |
-| Zorin           | [Zorin OS 16.2](https://mirrors.edge.kernel.org/zorinos-isos/16/Zorin-OS-16.2-Core-64-bit.iso) |
-| Elementary      | [elementary OS 7.0](https://ams3.dl.elementary.io/download/MTY2NzI2NzI2OA==/elementaryos-7.0-stable.20230308.iso) |
-| Deepin          | [Deepin 23 Beta](https://cdimage.deepin.com/releases/23/Deepin-23-Beta2-amd64.iso) |
-| MX Linux        | [MX Linux 23](https://sourceforge.net/projects/mx-linux/files/Final/Xfce/MX-23_x64.iso/download) |
-| Slackware       | [Slackware 15.0](https://mirrors.slackware.com/slackware/slackware64-15.0/iso/slackware64-15.0-install-dvd.iso) |
-| Void            | [Void Linux](https://alpha.de.repo.voidlinux.org/live/current/void-live-x86_64-20230628.iso) |
-| NixOS           | [NixOS 23.05](https://channels.nixos.org/nixos-23.05/latest-nixos-plasma5-x86_64-linux.iso) |
-| Clear           | [Clear Linux](https://cdn.download.clearlinux.org/releases/38510/clear/clear-38510-live.iso) |
-| Tails           | [Tails](https://tails.boum.org/install/vm/Tails.amd64.5.18.1-0.img) |
-| Parrot          | [Parrot Security](https://deb.parrot.sh/parrot/iso/5.3/Parrot-security-5.3_amd64.iso) |
-| BlackArch       | [BlackArch Linux](https://ftp.halifax.rwth-aachen.de/blackarch/iso/blackarch-linux-full-2023.09.01-x86_64.iso) |
-| Qubes           | [Qubes OS](https://mirrors.edge.kernel.org/qubes/iso/Qubes-R4.1.2-x86_64.iso) |
-| ReactOS         | [ReactOS](https://sourceforge.net/projects/reactos/files/ReactOS/0.4.15/ReactOS-0.4.15-iso.zip/download) |
-| Haiku           | [Haiku OS](https://download.haiku-os.org/nightly-images/x86_64/haiku-nightly-hrev57681-x86_64-anyboot.zip) |
-| Solus           | [Solus](https://downloads.getsol.us/4.4/Solus-4.4-Budgie.iso) |
-| Puppy           | [Puppy Linux](https://distro.ibiblio.org/puppylinux/puppy-fossa/fossapup64-9.5.iso) |
-| TinyCore        | [TinyCore Linux](http://tinycorelinux.net/13.x/x86_64/release/TinyCorePure64-13.0.iso) |
-| antiX           | [antiX Linux](https://sourceforge.net/projects/antix-linux/files/Final/antiX-23/antiX-23_x64-full.iso/download) |
-| Bodhi           | [Bodhi Linux](https://sourceforge.net/projects/bodhilinux/files/7.0.0/bodhi-7.0.0-64.iso/download) |
-| Peppermint      | [Peppermint OS](https://peppermintos.com/iso/Peppermint-11-20230703-amd64.iso) |
-| Lubuntu         | [Lubuntu](https://cdimage.ubuntu.com/lubuntu/releases/22.04/release/lubuntu-22.04.3-desktop-amd64.iso) |
-| Kubuntu         | [Kubuntu](https://cdimage.ubuntu.com/kubuntu/releases/22.04/release/kubuntu-22.04.3-desktop-amd64.iso) |
-| Xubuntu         | [Xubuntu](https://cdimage.ubuntu.com/xubuntu/releases/22.04/release/xubuntu-22.04.3-desktop-amd64.iso) |
-| Ubuntu Budgie   | [Ubuntu Budgie](https://cdimage.ubuntu.com/ubuntu-budgie/releases/22.04/release/ubuntu-budgie-22.04.3-desktop-amd64.iso) |
-| Ubuntu MATE     | [Ubuntu MATE](https://cdimage.ubuntu.com/ubuntu-mate/releases/22.04/release/ubuntu-mate-22.04.3-desktop-amd64.iso) |
-| Ubuntu Studio   | [Ubuntu Studio](https://cdimage.ubuntu.com/ubuntustudio/releases/22.04/release/ubuntustudio-22.04.3-dvd-amd64.iso) |
-| Edubuntu        | [Edubuntu](https://cdimage.ubuntu.com/edubuntu/releases/22.04/release/edubuntu-22.04.3-desktop-amd64.iso) |
-| Kali Live       | [Kali Linux Live](https://cdimage.kali.org/kali-2023.3/kali-linux-2023.3-live-amd64.iso) |
-| Kali Light      | [Kali Linux Light](https://cdimage.kali.org/kali-2023.3/kali-linux-light-2023.3-amd64.iso) |
-| Kali Everything | [Kali Linux Everything](https://cdimage.kali.org/kali-2023.3/kali-linux-everything-2023.3-amd64.iso) |
+3. **Role-Based Access Control**:
+   - Restricts commands to specific roles and channels.
 
 ---
 
-## Prerequisites
+## **Supported Operating Systems**
+The bot supports the following operating systems for fake VPS deployment:
 
-1. **Python 3.8 or higher:** Ensure Python is installed on your system.
-2. **Discord Bot Token:** Create a bot on the [Discord Developer Portal](https://discord.com/developers/applications) and get the bot token.
-3. **Virtualization Tools:** Install tools like `qemu` or `VirtualBox` for VPS deployment.
-4. **Git:** Install Git to clone the FreeRoot repository.
-5. **tmate:** Install tmate for instant SSH access.
+| OS Name       | Display Name      |
+|---------------|-------------------|
+| `ubuntu`      | Ubuntu            |
+| `debian`      | Debian            |
+| `centos`      | CentOS            |
+| `fedora`      | Fedora            |
+| `arch`        | Arch Linux        |
+| `alpine`      | Alpine Linux      |
+| `kali`        | Kali Linux        |
+| `opensuse`    | openSUSE          |
+| `rocky`       | Rocky Linux       |
+| `freebsd`     | FreeBSD           |
+| `gentoo`      | Gentoo            |
+| `manjaro`     | Manjaro           |
+| `mint`        | Linux Mint        |
+| `popos`       | Pop!_OS           |
+| `zorin`       | Zorin OS          |
+| `elementary`  | elementary OS     |
+| `deepin`      | Deepin            |
+| `mxlinux`     | MX Linux          |
+| `slackware`   | Slackware         |
+| `void`        | Void Linux        |
+| `nixos`       | NixOS             |
+| `clear`       | Clear Linux       |
+| `tails`       | Tails             |
+| `parrot`      | Parrot OS         |
+| `blackarch`   | BlackArch         |
+| `qubes`       | Qubes OS          |
+| `reactos`     | ReactOS           |
+| `haiku`       | Haiku             |
+| `solus`       | Solus             |
+| `puppy`       | Puppy Linux       |
+| `tinycore`    | Tiny Core Linux   |
+| `antix`       | antiX             |
+| `bodhi`       | Bodhi Linux       |
+| `peppermint`  | Peppermint OS     |
+| `lubuntu`     | Lubuntu           |
+| `kubuntu`     | Kubuntu           |
+| `xubuntu`     | Xubuntu           |
+| `ubuntu-budgie` | Ubuntu Budgie   |
+| `ubuntu-mate` | Ubuntu MATE       |
+| `ubuntu-studio` | Ubuntu Studio   |
+| `edubuntu`    | Edubuntu          |
+| `kali-live`   | Kali Linux (Live) |
+| `kali-light`  | Kali Linux (Light)|
+| `kali-everything` | Kali Linux (Everything) |
 
 ---
 
-## Installation
+## **Prerequisites**
+1. **Python 3.8+**:
+   - Ensure Python 3.8 or later is installed.
 
-1. **Clone the Repository:**
+2. **Docker**:
+   - Install Docker on your system:
+     ```bash
+     sudo apt update
+     sudo apt install docker.io
+     sudo systemctl start docker
+     sudo systemctl enable docker
+     ```
+
+3. **Discord Bot Token**:
+   - Create a Discord bot and obtain its token from the [Discord Developer Portal](https://discord.com/developers/applications).
+
+---
+
+## **Installation**
+1. **Clone the Repository**:
    ```bash
    git clone https://github.com/your-username/discord-vps-deployer.git
    cd discord-vps-deployer
    ```
 
-2. **Install Dependencies:**
+2. **Install Dependencies**:
    ```bash
-   pip install discord.py
-   sudo apt update
-   sudo apt install wget git qemu-kvm tmate
+   pip install -r requirements.txt
    ```
 
-3. **Configure the Bot:**
-   - Open the `discord_vps_deployer.py` file.
-   - Replace `YOUR_DISCORD_BOT_TOKEN` with your actual bot token.
-   - Replace `ALLOWED_CHANNEL_IDS` and `ALLOWED_ROLE_IDS` with the IDs of the channels and roles you want to allow.
+3. **Configure the Bot**:
+   - Open the script and replace the following placeholders:
+     - `ALLOWED_CHANNEL_IDS`: Add the IDs of the channels where the bot is allowed to operate.
+     - `ALLOWED_ROLE_IDS`: Add the IDs of the roles that can use the bot.
+     - `TOKEN`: Replace with your Discord bot token.
 
-4. **Run the Bot:**
+4. **Run the Bot**:
    ```bash
    python3 discord_vps_deployer.py
    ```
 
 ---
 
-## Usage
+## **Commands**
+### **VPS Deployment**
+- **`/deploy <os_name> <ram> <cpu> [duration]`**:
+  - Deploys a fake VPS with the specified OS, RAM, and CPU.
+  - The `duration` parameter specifies how long the VPS will run before being deleted (in seconds). If not provided, the VPS will not be automatically deleted.
+  - Example: `/deploy ubuntu 2048 2 3600` deploys an Ubuntu VPS with 2GB RAM and 2 CPU cores, which will be deleted after 1 hour.
 
-### Deploy a VPS
+- **`/status <vps_id>`**:
+  - Checks the status of a VPS instance.
+  - Example: `/status 1` checks the status of VPS with ID 1.
 
-Use the `/deploy` command to deploy a VPS with the specified OS, RAM, and CPU.
+### **Docker Management**
+- **`/docker run <image_name>`**:
+  - Deploys a Docker container from the specified image.
+  - Example: `/docker run ubuntu` deploys an Ubuntu container.
 
-**Command Format:**
-```
-/deploy <os> <ram> <cpu> [--timeout <seconds>]
-```
+- **`/docker ps`**:
+  - Lists all running Docker containers.
 
-**Example:**
-```
-/deploy ubuntu 2048 2 --timeout 3600
-```
+- **`/docker stop <container_id>`**:
+  - Stops a running container.
+  - Example: `/docker stop abc123` stops the container with ID `abc123`.
 
-This command will deploy a VPS with:
-- OS: Ubuntu
-- RAM: 2048MB (2GB)
-- CPU: 2 cores
-- Timeout: 3600 seconds (1 hour)
-
-### Check VPS Status
-
-Use the `/status` command to check the status of a deployed VPS.
-
-**Command Format:**
-```
-/status <vps_id>
-```
-
-**Example:**
-```
-/status 1
-```
-
-### Automatic Cleanup
-
-If a timeout is specified during deployment, the VPS will be automatically deleted after the specified time.
+- **`/docker rm <container_id>`**:
+  - Deletes a container.
+  - Example: `/docker rm abc123` deletes the container with ID `abc123`.
 
 ---
 
-## Example Workflow
+## **Examples**
+1. **Deploy a Fake VPS for 1 Hour**:
+   ```
+   /deploy ubuntu 2048 2 3600
+   ```
+   - Deploys an Ubuntu VPS with 2GB RAM and 2 CPU cores, which will be deleted after 1 hour.
 
-1. **User in Allowed Channel:**
+2. **Deploy a Fake VPS for 30 Minutes**:
    ```
-   User: /deploy ubuntu 2048 2 --timeout 3600
-   Bot: 🚀 Deploying VPS with OS: ubuntu, RAM: 2048MB, CPU: 2 cores...
-   Bot: ✅ VPS deployed successfully! VPS ID: 1
-   Bot: 📩 Check your DMs for the SSH connection details!
-   Bot: ⏳ VPS 1 will be deleted in 3600 seconds.
+   /deploy debian 4096 4 1800
    ```
+   - Deploys a Debian VPS with 4GB RAM and 4 CPU cores, which will be deleted after 30 minutes.
 
-2. **User Receives DM:**
+3. **Deploy a Docker Container**:
    ```
-   Bot (DM): 🔑 Your VPS SSH connection:
+   /docker run nginx
    ```
-   ssh user@tmate.io
-   ```
+   - Deploys an Nginx container.
 
-3. **User in Disallowed Channel:**
+4. **List Running Containers**:
    ```
-   User: /deploy ubuntu 2048 2
-   Bot: ❌ This command is not allowed in this channel.
-   ```
-
-4. **User Without Allowed Role:**
-   ```
-   User: /deploy ubuntu 2048 2
-   Bot: ❌ You do not have permission to use this command.
+   /docker ps
    ```
 
-5. **Invalid Input:**
+5. **Stop a Container**:
    ```
-   User: /deploy ubuntu 128 2
-   Bot: ❌ Invalid RAM amount. Please specify a value between 512 and 16384 MB.
+   /docker stop abc123
+   ```
+
+6. **Delete a Container**:
+   ```
+   /docker rm abc123
    ```
 
 ---
 
-## Notes
+## **Security**
+- **Role-Based Access Control**:
+  - Restrict bot commands to specific roles and channels by configuring `ALLOWED_CHANNEL_IDS` and `ALLOWED_ROLE_IDS`.
 
-- Replace `YOUR_DISCORD_BOT_TOKEN` with your actual bot token.
-- Ensure the bot has the necessary permissions in your Discord server.
-- Test the script thoroughly before deploying it in a production environment.
+- **Docker Permissions**:
+  - Ensure only trusted users have access to Docker commands, as they can manipulate containers and potentially affect the host system.
 
 ---
 
-## License
+## **Contributing**
+Contributions are welcome! If you find any issues or have suggestions for improvements, please open an issue or submit a pull request.
 
+---
+
+## **License**
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ---
-
-Enjoy deploying VPS instances with ease using the **Discord VPS Deployer**! 🚀
-
----
-
-This README provides a comprehensive guide to setting up and using the bot. Let me know if you need further assistance! 🚀

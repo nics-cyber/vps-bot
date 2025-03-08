@@ -3,48 +3,81 @@ import subprocess
 import asyncio
 import discord
 from discord.ext import commands
+import docker  # Docker SDK for Python
 
 # Configuration
 ALLOWED_CHANNEL_IDS = [123456789012345678]  # Replace with your allowed channel IDs
 ALLOWED_ROLE_IDS = [987654321098765432]     # Replace with your allowed role IDs
 TOKEN = "YOUR_DISCORD_BOT_TOKEN"            # Replace with your Discord bot token
 
-# Supported OS options (40 operating systems)
-SUPPORTED_OS = {
-    # Original 10 OS
-    "ubuntu": "https://releases.ubuntu.com/22.04/ubuntu-22.04.3-live-server-amd64.iso",
-    "debian": "https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-12.1.0-amd64-netinst.iso",
-    "centos": "http://isoredirect.centos.org/centos/7/isos/x86_64/CentOS-7-x86_64-DVD-2009.iso",
-    "fedora": "https://download.fedoraproject.org/pub/fedora/linux/releases/38/Server/x86_64/iso/Fedora-Server-dvd-x86_64-38-1.6.iso",
-    "arch": "https://mirror.rackspace.com/archlinux/iso/2023.10.14/archlinux-2023.10.14-x86_64.iso",
-    "alpine": "https://dl-cdn.alpinelinux.org/alpine/v3.18/releases/x86_64/alpine-virt-3.18.4-x86_64.iso",
-    "kali": "https://cdimage.kali.org/kali-2023.3/kali-linux-2023.3-installer-amd64.iso",
-    "opensuse": "https://download.opensuse.org/distribution/leap/15.5/iso/openSUSE-Leap-15.5-DVD-x86_64.iso",
-    "rocky": "https://download.rockylinux.org/pub/rocky/9/isos/x86_64/Rocky-9.2-x86_64-dvd.iso",
-    "freebsd": "https://download.freebsd.org/releases/amd64/amd64/ISO-IMAGES/13.2/FreeBSD-13.2-RELEASE-amd64-dvd1.iso",
+# Initialize Docker client
+docker_client = docker.from_env()
 
-    # Additional 30 OS (truncated for brevity)
-    "gentoo": "https://bouncer.gentoo.org/fetch/root/all/releases/amd64/autobuilds/20231008T170153Z/livegui-amd64-20231008T170153Z.iso",
-    "manjaro": "https://download.manjaro.org/kde/22.1.0/manjaro-kde-22.1.0-230529-linux61.iso",
-    # Add more OS as needed...
-}
-
-# Track VPS instances
+# Track VPS instances and Docker containers
 vps_instances = {}
+docker_containers = {}
 
 # Initialize the bot
 intents = discord.Intents.default()
 intents.message_content = True
 bot = commands.Bot(command_prefix="/", intents=intents)
 
-def fake_neofetch(os_name: str, ram: int, cpu: int):
+def generate_neofetch(os_name: str, ram: int, cpu: int):
     """
-    Generates a fake neofetch output with custom RAM and CPU values.
+    Generates a neofetch output with a dynamic OS image based on the selected OS.
     """
+    os_display_names = {
+        "ubuntu": "Ubuntu",
+        "debian": "Debian",
+        "centos": "CentOS",
+        "fedora": "Fedora",
+        "arch": "Arch Linux",
+        "alpine": "Alpine Linux",
+        "kali": "Kali Linux",
+        "opensuse": "openSUSE",
+        "rocky": "Rocky Linux",
+        "freebsd": "FreeBSD",
+        "gentoo": "Gentoo",
+        "manjaro": "Manjaro",
+        "mint": "Linux Mint",
+        "popos": "Pop!_OS",
+        "zorin": "Zorin OS",
+        "elementary": "elementary OS",
+        "deepin": "Deepin",
+        "mxlinux": "MX Linux",
+        "slackware": "Slackware",
+        "void": "Void Linux",
+        "nixos": "NixOS",
+        "clear": "Clear Linux",
+        "tails": "Tails",
+        "parrot": "Parrot OS",
+        "blackarch": "BlackArch",
+        "qubes": "Qubes OS",
+        "reactos": "ReactOS",
+        "haiku": "Haiku",
+        "solus": "Solus",
+        "puppy": "Puppy Linux",
+        "tinycore": "Tiny Core Linux",
+        "antix": "antiX",
+        "bodhi": "Bodhi Linux",
+        "peppermint": "Peppermint OS",
+        "lubuntu": "Lubuntu",
+        "kubuntu": "Kubuntu",
+        "xubuntu": "Xubuntu",
+        "ubuntu-budgie": "Ubuntu Budgie",
+        "ubuntu-mate": "Ubuntu MATE",
+        "ubuntu-studio": "Ubuntu Studio",
+        "edubuntu": "Edubuntu",
+        "kali-live": "Kali Linux (Live)",
+        "kali-light": "Kali Linux (Light)",
+        "kali-everything": "Kali Linux (Everything)",
+    }
+    os_display_name = os_display_names.get(os_name, "Linux OS")
+
     neofetch_output = f"""
-    OS: {os_name.capitalize()}
-    Host: Fake VPS
-    Kernel: 6.2.0-36-generic
+    OS: {os_display_name} (Fresh Install)
+    Host: VPS-01
+    Kernel: 5.15.0-83-generic
     Uptime: 0 min
     Packages: 0 (dpkg), 0 (rpm)
     Shell: bash 5.1.16
@@ -55,24 +88,25 @@ def fake_neofetch(os_name: str, ram: int, cpu: int):
     Theme: None
     Icons: None
     Terminal: None
-    CPU: Fake CPU ({cpu} cores)
+    CPU: Virtual CPU ({cpu} cores)
     GPU: None
     Memory: {ram}MB / {ram}MB
+    Disk: 10GB / 10GB (100% free)
     """
     return neofetch_output
 
-def generate_fake_ssh():
+def generate_ssh():
     """
-    Generates a fake SSH connection string.
+    Generates an SSH connection string.
     """
-    fake_ssh = "ssh fakeuser@fakevps.example.com -p 22"
-    return fake_ssh
+    ssh_connection = "ssh user@vps.example.com -p 22"
+    return ssh_connection
 
-async def cleanup_vps(vps_id: int, timeout: int):
+async def cleanup_vps(vps_id: int, duration: int):
     """
-    Function to automatically delete a VPS after a specified timeout.
+    Function to automatically delete a VPS after a specified duration.
     """
-    await asyncio.sleep(timeout)
+    await asyncio.sleep(duration)
     if vps_id in vps_instances:
         del vps_instances[vps_id]
         print(f"VPS {vps_id} has been deleted.")
@@ -82,7 +116,7 @@ async def on_ready():
     print(f"Bot is ready. Logged in as {bot.user}")
 
 @bot.command(name="deploy")
-async def deploy_vps(ctx, os_name: str, ram: int, cpu: int, timeout: int = None):
+async def deploy_vps(ctx, os_name: str, ram: int, cpu: int, duration: int = None):
     """
     Discord command to deploy a VPS.
     Only allowed in specific channels and for specific roles.
@@ -110,37 +144,111 @@ async def deploy_vps(ctx, os_name: str, ram: int, cpu: int, timeout: int = None)
         await ctx.send("❌ Invalid CPU count. Please specify a value between 1 and 16 cores.")
         return
 
+    # Validate duration (if provided)
+    if duration is not None and duration < 60:
+        await ctx.send("❌ Duration must be at least 60 seconds.")
+        return
+
     # Deploy the VPS
     await ctx.send(f"🚀 Deploying VPS with OS: {os_name}, RAM: {ram}MB, CPU: {cpu} cores...")
     try:
-        # Generate fake neofetch output
-        neofetch_output = fake_neofetch(os_name, ram, cpu)
+        # Generate neofetch output for the selected OS
+        neofetch_output = generate_neofetch(os_name, ram, cpu)
         await ctx.send(f"```{neofetch_output}```")
 
-        # Generate fake SSH connection
-        ssh_connection = generate_fake_ssh()
+        # Generate SSH connection
+        ssh_connection = generate_ssh()
         await ctx.author.send(f"🔑 Your VPS SSH connection:\n```{ssh_connection}```")
         await ctx.send("📩 Check your DMs for the SSH connection details!")
 
-        # Schedule cleanup if timeout is specified
-        if timeout:
+        # Schedule cleanup if duration is specified
+        if duration:
             vps_id = len(vps_instances) + 1
             vps_instances[vps_id] = None  # Placeholder for cleanup
-            asyncio.create_task(cleanup_vps(vps_id, timeout))
-            await ctx.send(f"⏳ VPS {vps_id} will be deleted in {timeout} seconds.")
+            asyncio.create_task(cleanup_vps(vps_id, duration))
+            await ctx.send(f"⏳ VPS {vps_id} will be deleted in {duration} seconds.")
     except Exception as e:
         await ctx.send(f"❌ Failed to deploy VPS: {e}")
 
-@bot.command(name="status")
-async def vps_status(ctx, vps_id: int):
+@bot.command(name="docker")
+async def docker_command(ctx, action: str, *args):
     """
-    Discord command to check the status of a VPS.
+    Discord command to manage Docker containers.
+    Supported actions: run, ps, stop, rm
     """
-    if vps_id not in vps_instances:
-        await ctx.send(f"❌ VPS {vps_id} not found.")
+    # Check if the command is used in an allowed channel
+    if ctx.channel.id not in ALLOWED_CHANNEL_IDS:
+        await ctx.send("❌ This command is not allowed in this channel.")
         return
 
-    await ctx.send(f"✅ VPS {vps_id} is running.")
+    # Check if the user has an allowed role
+    if not any(role.id in ALLOWED_ROLE_IDS for role in ctx.author.roles):
+        await ctx.send("❌ You do not have permission to use this command.")
+        return
+
+    # Handle Docker actions
+    try:
+        if action == "run":
+            # Deploy a Docker container
+            if len(args) < 1:
+                await ctx.send("❌ Usage: /docker run <image_name>")
+                return
+
+            image_name = args[0]
+            await ctx.send(f"🚀 Deploying Docker container from image: {image_name}...")
+
+            # Run the Docker container
+            container = docker_client.containers.run(image_name, detach=True)
+            docker_containers[container.id] = container
+
+            await ctx.send(f"✅ Container deployed successfully! Container ID: `{container.id}`")
+
+        elif action == "ps":
+            # List running containers
+            containers = docker_client.containers.list()
+            if not containers:
+                await ctx.send("❌ No running containers found.")
+                return
+
+            container_list = "\n".join([f"`{c.id}` - {c.name}" for c in containers])
+            await ctx.send(f"📦 Running Containers:\n{container_list}")
+
+        elif action == "stop":
+            # Stop a running container
+            if len(args) < 1:
+                await ctx.send("❌ Usage: /docker stop <container_id>")
+                return
+
+            container_id = args[0]
+            if container_id not in docker_containers:
+                await ctx.send(f"❌ Container `{container_id}` not found.")
+                return
+
+            container = docker_containers[container_id]
+            container.stop()
+            await ctx.send(f"🛑 Container `{container_id}` stopped successfully.")
+
+        elif action == "rm":
+            # Delete a container
+            if len(args) < 1:
+                await ctx.send("❌ Usage: /docker rm <container_id>")
+                return
+
+            container_id = args[0]
+            if container_id not in docker_containers:
+                await ctx.send(f"❌ Container `{container_id}` not found.")
+                return
+
+            container = docker_containers[container_id]
+            container.remove()
+            del docker_containers[container_id]
+            await ctx.send(f"🗑️ Container `{container_id}` deleted successfully.")
+
+        else:
+            await ctx.send("❌ Invalid action. Supported actions: run, ps, stop, rm")
+
+    except Exception as e:
+        await ctx.send(f"❌ Failed to execute Docker command: {e}")
 
 # Run the bot
 if __name__ == "__main__":

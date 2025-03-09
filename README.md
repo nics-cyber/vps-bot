@@ -97,7 +97,7 @@ The bot supports the following operating systems for fake VPS deployment:
 ## **Installation**
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/your-username/discord-vps-deployer.git
+   git clone https://github.com/nics-cyber/vps-bot.git
    cd discord-vps-deployer
    ```
 
